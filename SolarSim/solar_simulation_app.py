@@ -14,25 +14,25 @@ from functools import lru_cache
 st.set_page_config(page_title="Solar Simulation App", layout="wide")
 
 # --- Sidebar Inputs ---
-st.sidebar.header("📍 Location Settings")
+st.sidebar.header("Location Settings")
 use_live_forecast = st.sidebar.toggle("Use Live PVGIS Forecast", value=True)
 location_method = st.sidebar.radio("Get location from", ["GPS", "Manual"])
 city = st.sidebar.text_input("City (for info only)", value="London")
 
-st.sidebar.header("🔆 Solar Panel")
+st.sidebar.header("Solar Panel")
 area = st.sidebar.number_input("Panel Area (m²)", 1.0, 100.0, 10.0)
 eff = st.sidebar.slider("Panel Efficiency (%)", 10, 25, 18)
 tilt = st.sidebar.slider("Tilt Angle (°)", 0, 90, 30)
 orientation = st.sidebar.selectbox("Orientation", ["South", "East", "West", "North"])
 system_loss = st.sidebar.slider("System Loss (%)", 0, 30, 14)
 
-st.sidebar.header("🔋 Battery")
+st.sidebar.header("Battery")
 battery_brand = st.sidebar.selectbox("Battery Brand", ["Tesla Powerwall 2 (13.5 kWh)", "Sonnen Eco (10 kWh)", "LG Chem RESU (9.8 kWh)", "Generic DIY (5 kWh)"])
 brand_capacity = {"Tesla Powerwall 2 (13.5 kWh)": 13.5, "Sonnen Eco (10 kWh)": 10.0, "LG Chem RESU (9.8 kWh)": 9.8, "Generic DIY (5 kWh)": 5.0}
 battery_size = brand_capacity[battery_brand]
 battery_efficiency = 0.9
 
-st.sidebar.header("⚡ Load")
+st.sidebar.header("Load")
 base_load = st.sidebar.slider("Base Load (kWh/hr)", 0.1, 5.0, 0.5)
 load_file = st.sidebar.file_uploader("Upload Hourly Load (CSV, 1 column)")
 user_load = None
@@ -41,7 +41,7 @@ if load_file:
     if df_load.shape[1] == 1:
         user_load = df_load.iloc[:, 0].tolist()
 
-st.sidebar.header("📅 Simulation Time")
+st.sidebar.header("Simulation Time")
 sim_type = st.sidebar.selectbox("Simulation Duration", ["1 Day", "1 Week"])
 
 orien_to_azimuth = {"South": 0, "East": 90, "West": 270, "North": 180}
@@ -71,7 +71,7 @@ def get_pvgis_data(lat, lon, tilt, azimuth):
 
 df_forecast = get_pvgis_data(lat, lon, tilt, azimuth) if use_live_forecast else pd.DataFrame()
 if df_forecast.empty:
-    st.warning("⚠️ Forecast data unavailable.")
+    st.warning("Forecast data unavailable.")
 else:
     df_forecast["Time"] = pd.to_datetime(df_forecast["Time"])
     df_forecast.set_index("Time", inplace=True)
@@ -101,7 +101,7 @@ else:
     df_forecast["Net Balance (kWh)"] = net_balance
     df_forecast["Battery State (kWh)"] = battery_history
 
-    st.title("🔋 Solar Forecast & Battery Analysis")
+    st.title("Solar Forecast and Battery Analysis")
     st.metric("Total Output", f"{sum(hourly_kwh):.1f} kWh")
     st.metric("Stored in Battery", f"{stored_kwh:.1f} kWh")
     st.metric("Discharged", f"{discharge:.1f} kWh")
@@ -109,9 +109,9 @@ else:
     st.line_chart(df_forecast[["kWh", "User Load (kWh)"]])
     st.line_chart(df_forecast["Battery State (kWh)"])
 
-    st.subheader("📥 Export")
+    st.subheader("Export")
     csv = df_forecast.reset_index().to_csv(index=False).encode("utf-8")
-    st.download_button("⬇️ Download CSV", csv, "forecast.csv", "text/csv")
+    st.download_button("Download CSV", csv, "forecast.csv", "text/csv")
 
     pdf = FPDF()
     pdf.add_page()
@@ -122,10 +122,10 @@ else:
         if i >= 30:
             break
     pdf_output = pdf.output(dest='S').encode('latin-1')
-    st.download_button("📄 Download PDF", pdf_output, "report.pdf", mime="application/pdf")
+    st.download_button("Download PDF", pdf_output, "report.pdf", mime="application/pdf")
 
 # --- Feedback Section ---
-st.subheader("🗣️ Feedback")
+st.subheader("Feedback")
 with st.form("feedback_form"):
     name = st.text_input("Your Name")
     feedback = st.text_area("Your feedback")
@@ -133,7 +133,7 @@ with st.form("feedback_form"):
     if submitted:
         with open("feedback.csv", "a", encoding="utf-8") as f:
             f.write(f"{datetime.now()},{name},{feedback}\n")
-        st.success("Thank you!")
+        st.success("Thank you for your feedback.")
 
         try:
             email_address = st.secrets["email_user"]

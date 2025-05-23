@@ -1,7 +1,7 @@
 import requests
 
 # Replace this with your real OpenWeatherMap API key
-OPENWEATHER_API_KEY = "5a5e2d188de250bb48180caf4d086ec0"
+OPENWEATHER_API_KEY = "OPENWEATHER_API_KEY"
 
 # --- Get Current Weather and Estimated Irradiance ---
 def get_weather(lat, lon):

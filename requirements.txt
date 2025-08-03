@@ -1,7 +1,0 @@
-streamlit
-numpy
-pandas
-altair
-fpdf
-requests
-streamlit-js-eval
